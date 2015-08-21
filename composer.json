@@ -1,0 +1,7 @@
+{
+    "name": "frdl/package-fetcher",
+    "require": {
+        "php": ">=5.3.0",
+        "frdl/webfan" : "dev-master"
+    }
+}
