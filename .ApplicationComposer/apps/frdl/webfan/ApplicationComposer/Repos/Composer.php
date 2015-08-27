@@ -45,7 +45,7 @@ class Composer extends Package
             }
         }
   
-   */
+  
    
    protected function _Data(){
    	  $d = new \frdl\o;
@@ -57,7 +57,7 @@ class Composer extends Package
    	  $d->package->source->url = "https://github.com/composer/composer/archive/1.0.0-alpha10.zip";
    	  $d->package->source->type = "zip";
   }
-   
+  */  
    protected function _data(\frdl\o $data = null){
    	  $this->_data = (null !== $data) ? $data : $this->_Data();
    	  return  $this->_data;   	  

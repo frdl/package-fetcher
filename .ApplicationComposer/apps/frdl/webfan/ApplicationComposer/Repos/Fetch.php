@@ -31,29 +31,134 @@ use frdl\ApplicationComposer;
 
 class Fetch
 {
+   protected $o; //options	
+   protected $r; //result
+   
+   protected $repos = null;
+   protected $db;
 	
-   function __construct(){
-   	
+   function __construct($options = array()){
+   	  $this->o = array_merge($this->defaultOptions(), $options);
+   	 $this->db =  \frdl\xGlobal\webfan::db();
    }	
+
+  
+   public function __call($name, $args){
+   	   $method = '_q_'.$name;
+   	   if(is_callable(array($this, $method))){
+	   	  return call_user_func_array(array($this,$method), $args);
+	   }
+	   
+	  $trace = debug_backtrace();
+  	 trigger_error(
+		            'Undefined method call: ' . $name . '('.$method.')' .
+		           ' in ' . $trace[0]['file'] .
+		           ' on line ' . $trace[0]['line'],
+		           E_USER_WARNING);
+		return $this;
+   }
+     
+     
+  public function getActiveRepositories($refresh = false){
+  	if(true === $refresh && is_array($this->repos))return $this->repos;
+
+    try{
+     $R = new \frdl\ApplicationComposer\Repository( array(), $this->db->settings(), $this->db );
+    // $this->repos  = $R->search(array('_use' => 1));
+      $this->repos  = $R->all();			
+	}catch(\Exception $e){
+      trigger_error($e->getMessage().' in '.__METHOD__.' '.__LINE__, E_USER_ERROR);
+     $this->repos = array();
+	}	
 	
 	
-   protected function _info(){
+	return $this->repos;
+  }    
+     
+
+   public function defaultOptions(){
+   	  return array(
+   	        'cache_time' => 3 * 60,
+   	        'save' => false,
+   	        'debug' => false,
+   	        'cachekey' => '~pmfetch'.sha1(get_class($this)),
+   	  );
+   }	
+   
+   
+   protected function cachefile($sub){
+   	 return $this->o['DIRS']['cache'] . $this->o['cachekey'].'.'.sha1($sub).'.'.strlen($sub).'.php';
+   }
+   
+   protected function cache($sub, $value = null){
+   	  $file = $this->cachefile($sub);
+   	  if(null === $value && (!file_exists($file) || filemtime($file) < time() -  $this->o['cache_time']))return null;
+   	  if(null === $value){
+   	  	try{
+   	  	    require $file;
+   	  	    if($time < time() -  $this->o['cache_time'])return null;
+   	  	    return $value;			
+		}catch(\Exception $e){
+			trigger_error($e->getMessage(), E_USER_ERROR);
+		}
+
+   	  	}
+   	  	
+   	  $code = "<?php
+  \$time = ".time().";
+  \$value = ".str_replace("stdClass::__set_state", "(object)", var_export($value, true)).";
+             	  
+";
+   	   file_put_contents($file, $code);
+   }
+   
+   
+   protected function result(){
+   	 return $this->r;
+   }
+   	
+   protected function _q_info(){
    	
    }
    
-   protected function _all(){
+   protected function _q_all(){
    	
    }
    
-   protected function _search($query){
+   protected function _q_search($query){
+     	$k = 'search '.$query;
+     	$cache = $this->cache($k, null);
+     	if(is_array($cache)){
+     	    $this->r =$cache;
+			return $this->r;
+		}
    	
+   	   $this->r = array(); 
+   	   foreach($this->getActiveRepositories(false) as $num => $repos){
+ 	   	  $classname = urldecode($repos['fetcher_class']);
+ 	   	  if(1!==intval($repos['_use']))continue;
+ 	   	 try{
+	   	  $f = new $classname;
+	   	  $f->setConfig($this->o);
+	   	  $r = $f->search($query);
+	   	 if(is_array($r))array_push($this->r, $r);		 	
+		 }catch(\Exception $e){
+		 	trigger_error($e->getMessage(), E_USER_ERROR);
+		 }
+
+	   	  
+	   }
+	   
+	
+	   $this->cache($k, $this->r);
+	   return $this->r;
    }
    
-   protected function _package($vendor, $packagename){
+   protected function _q_package($vendor, $packagename){
    	
    }  
   
-   protected function _download($vendor, $packagename){
+   protected function _q_download($vendor, $packagename){
    	
    }  	
 }

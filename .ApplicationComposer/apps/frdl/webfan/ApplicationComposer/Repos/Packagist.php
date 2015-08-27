@@ -32,6 +32,12 @@ use frdl\ApplicationComposer;
 class Packagist extends PackageFetcher
 {
 	
+   private $purl = 'https://packagist.org';
+
+   protected function url($uri){
+      return $this->purl.$uri;
+   }
+    	
    public function info(){
    	
    }
@@ -41,8 +47,28 @@ class Packagist extends PackageFetcher
    }
    
    public function search($query){
-   	
+   	  return $this->_search($query);
    }
+   public function _search($query, array $search = array())
+    {
+        $result = array();
+        $search['q'] = $query;
+        $url =  $this->url('/search.json?' . http_build_query($search));
+
+        $this->request($url, $body, $error);
+        
+        if('' !== $error)return false;
+        try{
+			$r = json_decode($body);
+			$result = $r->results;
+		}catch(\Exception $e){
+			trigger_error($e->getMessage(), E_USER_WARNING);
+			return false;
+		}
+        
+        return $result;
+    }
+   
    
    public function package($vendor, $packagename){
    	
