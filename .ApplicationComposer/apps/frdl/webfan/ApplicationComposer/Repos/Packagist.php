@@ -61,6 +61,20 @@ class Packagist extends PackageFetcher
         try{
 			$r = json_decode($body);
 			$result = $r->results;
+		    $result = array_merge($result, $r->results);
+		   
+		if(isset($r->next))
+		{
+		do {
+			$this->request($r->next, $body, $error);
+			 if('' !== $error)return false;
+		 	$r = json_decode($body);
+			$result = array_merge($result, $r->results);
+        } while (isset($r->next));			
+		}
+
+	
+			
 		}catch(\Exception $e){
 			trigger_error($e->getMessage(), E_USER_WARNING);
 			return false;
