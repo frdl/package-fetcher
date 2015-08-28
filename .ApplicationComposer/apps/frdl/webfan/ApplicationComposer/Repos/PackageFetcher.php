@@ -47,6 +47,11 @@ abstract class PackageFetcher
    	  return $config;
    }	
    
+   protected function url($uri){
+      return $this->purl.$uri;
+   }
+   
+   	   
    public function setConfig($config = array()){
    	     $this->config = $config;
    }

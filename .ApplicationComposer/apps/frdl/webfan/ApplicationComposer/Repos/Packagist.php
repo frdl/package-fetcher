@@ -32,12 +32,10 @@ use frdl\ApplicationComposer;
 class Packagist extends PackageFetcher
 {
 	
-   private $purl = 'https://packagist.org';
+   protected $purl = 'https://packagist.org';
 
-   protected function url($uri){
-      return $this->purl.$uri;
-   }
-    	
+
+
    public function info(){
    	
    }
@@ -57,10 +55,24 @@ class Packagist extends PackageFetcher
 
         $this->request($url, $body, $error);
         
-        if('' !== $error)return false;
+        if('' !== $error)return $error;
         try{
 			$r = json_decode($body);
 			$result = $r->results;
+		   
+		   
+		if(isset($r->next))
+		{
+		do {
+			$this->request($r->next, $body, $error);
+			 if('' !== $error)return $result;
+		 	$r = json_decode($body);
+			$result = array_merge($result, $r->results);
+        } while (isset($r->next));			
+		}
+
+	
+			
 		}catch(\Exception $e){
 			trigger_error($e->getMessage(), E_USER_WARNING);
 			return false;

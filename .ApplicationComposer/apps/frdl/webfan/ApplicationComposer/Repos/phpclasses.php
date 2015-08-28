@@ -31,7 +31,10 @@ use frdl\ApplicationComposer;
 
 class phpclasses extends PackageFetcher
 {
-	
+   protected $purl = 'http://www.phpclasses.org';
+   
+
+      	
    public function info(){
    	
    }
@@ -41,7 +44,32 @@ class phpclasses extends PackageFetcher
    }
    
    public function search($query){
-   	
+        $result = array();
+     	$search = array();
+        $search['q'] = $query;
+        $url =  $this->url('/packages.json');
+
+        $this->request($url, $body, $error);
+        
+        if('' !== $error)return $error;
+  
+        try{
+			$r = json_decode($body);
+	        foreach($r->packages as $package => $p){  
+	          if(!preg_match("/".preg_quote($query)."/", $package))continue;
+              foreach($p as $_v => $v){
+				      $result[] = $v;
+			  }
+
+			}  	   
+	
+		}catch(\Exception $e){
+			trigger_error($e->getMessage(), E_USER_WARNING);
+			return $result;
+		}
+        
+        
+        return $result;  	
    }
    
    public function package($vendor, $packagename){

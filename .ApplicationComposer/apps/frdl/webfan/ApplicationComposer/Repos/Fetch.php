@@ -78,7 +78,7 @@ class Fetch
 
    public function defaultOptions(){
    	  return array(
-   	        'cache_time' => 3 * 60,
+   	        'cache_time' => 8 * 60,
    	        'save' => false,
    	        'debug' => false,
    	        'cachekey' => '~pmfetch'.sha1(get_class($this)),
@@ -106,6 +106,7 @@ class Fetch
    	  	
    	  $code = "<?php
   \$time = ".time().";
+  \$expires = ".(time() + intval($this->o['cache_time'])).";
   \$value = ".str_replace("stdClass::__set_state", "(object)", var_export($value, true)).";
              	  
 ";
@@ -141,7 +142,7 @@ class Fetch
 	   	  $f = new $classname;
 	   	  $f->setConfig($this->o);
 	   	  $r = $f->search($query);
-	   	 if(is_array($r))array_push($this->r, $r);		 	
+	   	  $this->r[] = $r;		 	
 		 }catch(\Exception $e){
 		 	trigger_error($e->getMessage(), E_USER_ERROR);
 		 }

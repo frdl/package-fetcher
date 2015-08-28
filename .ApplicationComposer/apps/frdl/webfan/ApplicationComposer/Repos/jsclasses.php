@@ -29,23 +29,7 @@
 namespace frdl\ApplicationComposer\Repos;
 use frdl\ApplicationComposer;
 
-class jsclasses extends PackageFetcher
+class jsclasses extends phpclasses
 {
-	
-   public function info(){
-   	
-   }
-   
-   public function all(){
-   	
-   }
-   
-   public function search($query){
-   	
-   }
-   
-   public function package($vendor, $packagename){
-   	
-   }  
-	
+   protected $purl = 'http://www.jsclasses.org';
 }
