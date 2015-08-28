@@ -66,9 +66,11 @@ abstract class PackageFetcher
         $http->debug=0;
         $http->html_debug=0;
         $http->follow_redirect=1;
-        $http->user_agent = $_SERVER['HTTP_USE_AGENT'];   
-        $arguments['Headers']['Referer']= $_SERVER['HTTP_REFERER'];	
-
+       //  $http->user_agent = $_SERVER['HTTP_USE_AGENT'];   
+        $http->user_agent = 'Webfan.de Application Composer';   
+      //   $arguments['Headers']['Referer']= $_SERVER['HTTP_REFERER'];	
+        $arguments['Headers']['Referer']=  'http://frdl.github.io/webfan/';  
+        
         $error=$http->GetRequestArguments($url,$arguments);
 
         if($error!=="")return $this;
@@ -76,8 +78,7 @@ abstract class PackageFetcher
         $error=$http->Open($arguments);
         if($error!=="")return $this;
 
-       // $arguments['Headers']['X-Forwarded-For']=  $_SERVER['REMOTE_ADDR'];  
-        $arguments['Headers']['X-Forwarded-For']=  'http://frdl.github.io/webfan/';  
+       $arguments['Headers']['X-Forwarded-For']=  $_SERVER['REMOTE_ADDR'];  
         $arguments['Headers']['X-frdl-proxy']= 'Webfan';  
         $arguments['RequestMethod']='GET';
         $error=$http->SendRequest($arguments);  	
