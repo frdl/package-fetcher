@@ -56,9 +56,10 @@ class phpclasses extends PackageFetcher
         try{
 			$r = json_decode($body);
 	        foreach($r->packages as $package => $p){  
-	          if(!preg_match("/".preg_quote($query)."/", $package))continue;
+	          $_c = explode('/', $package);
+	          if(!preg_match("/".preg_quote($query)."/", $_c[1]))continue;
               foreach($p as $_v => $v){
-				      $result[] = $v;
+                 $result = array_merge($result, array($v));
 			  }
 
 			}  	   
