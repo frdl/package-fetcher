@@ -29,13 +29,9 @@
 namespace frdl\ApplicationComposer\Repos;
 use frdl\ApplicationComposer;
 
-class Packagist extends PackageFetcher
+class local extends PackageFetcher
 {
 	
-   protected $purl = 'https://packagist.org';
-
-
-
    public function info(){
    	
    }
@@ -45,61 +41,11 @@ class Packagist extends PackageFetcher
    }
    
    public function search($query){
-   	  return $this->_search($query);
+   	
    }
-   public function _search($query, array $search = array())
-    {
-        $result = array();
-        $search['q'] = $query;
-        $url =  $this->url('/search.json?' . http_build_query($search));
-
-        $this->request($url, $body, $error);
-        
-        if('' !== $error)return $error;
-        try{
-			$r = json_decode($body);
-			$result = $r->results;
-		   
-		   
-		if(isset($r->next))
-		{
-		do {
-			$this->request($r->next, $body, $error);
-			 if('' !== $error)return $result;
-		 	$r = json_decode($body);
-			$result = array_merge($result, $r->results);
-        } while (isset($r->next));			
-		}
-
-	
-			
-		}catch(\Exception $e){
-			trigger_error($e->getMessage(), E_USER_WARNING);
-			return false;
-		}
-        
-        return $result;
-    }
-   
    
    public function package($vendor, $packagename){
-        $result = array();
-        $url =  $this->url('/packages/'.$vendor.'/'.$packagename.'.json');
-
-        $this->request($url, $body, $error);
-        
-        if('' !== $error)return $error;
-        try{
-			$r = json_decode($body);
-			$result = $r;
-		    if(isset($result->package->versions))$result->package->versions=(array)$result->package->versions;
-			
-		}catch(\Exception $e){
-			trigger_error($e->getMessage(), E_USER_WARNING);
-			return false;
-		}
-        
-        return $result; 	
+   	
    }  
 	
 }

@@ -60,7 +60,7 @@ class Fetch
      
      
   public function getActiveRepositories($refresh = false){
-  	if(true === $refresh && is_array($this->repos))return $this->repos;
+  	if(true !== $refresh && is_array($this->repos))return $this->repos;
 
     try{
      $R = new \frdl\ApplicationComposer\Repository( array(), $this->db->settings(), $this->db );
@@ -87,7 +87,8 @@ class Fetch
    
    
    protected function cachefile($sub){
-   	 return $this->o['DIRS']['cache'] . $this->o['cachekey'].'.'.sha1($sub).'.'.strlen($sub).'.php';
+   	 $dir = (isset($this->o['DIRS']['cache']) && '' !== $this->o['DIRS']['cache']) ? $this->o['DIRS']['cache'] : '.ApplicationComposer/cache/';
+   	 return $dir . $this->o['cachekey'].'.'.sha1($sub).'.'.strlen($sub).'.php';
    }
    
    protected function cache($sub, $value = null){
@@ -156,7 +157,32 @@ class Fetch
    }
    
    protected function _q_package($vendor, $packagename){
+       	$k = 'package '.$vendor.'/'.$packagename;
+     	$cache = $this->cache($k, null);
+     	if(is_array($cache)){
+     	    $this->r =$cache;
+			return $this->r;
+		}
    	
+   	   $this->r = array(); 
+   	   foreach($this->getActiveRepositories(false) as $num => $repos){
+ 	   	  $classname = urldecode($repos['fetcher_class']);
+ 	   	  if(1!==intval($repos['_use']))continue;
+ 	   	 try{
+	   	  $f = new $classname;
+	   	  $f->setConfig($this->o);
+	   	  $r = $f->package($vendor, $packagename);
+	   	  $this->r[] = $r;		 	
+		 }catch(\Exception $e){
+		 	trigger_error($e->getMessage(), E_USER_ERROR);
+		 }
+
+	   	  
+	   }
+	   
+	
+	   $this->cache($k, $this->r);
+	   return $this->r; 	
    }  
   
    protected function _q_download($vendor, $packagename){

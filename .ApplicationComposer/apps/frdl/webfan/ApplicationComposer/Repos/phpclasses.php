@@ -51,6 +51,8 @@ class phpclasses extends PackageFetcher
 
         $this->request($url, $body, $error);
         
+     
+        
         if('' !== $error)return $error;
   
         try{
@@ -58,8 +60,9 @@ class phpclasses extends PackageFetcher
 	        foreach($r->packages as $package => $p){  
 	          $_c = explode('/', $package);
 	          if(!preg_match("/".preg_quote($query)."/", $_c[1]))continue;
-              foreach($p as $_v => $v){
+	          foreach($p as $_v => $v){
                  $result = array_merge($result, array($v));
+              
 			  }
 
 			}  	   
@@ -70,11 +73,38 @@ class phpclasses extends PackageFetcher
 		}
         
         
-        return $result;  	
+        return $result;  	 	
    }
    
    public function package($vendor, $packagename){
-   	
+        $result = null;
+        $url =  $this->url('/packages.json');
+
+        $this->request($url, $body, $error);
+        
+        if('' !== $error)return $error;
+  
+        try{
+			$r = json_decode($body);
+	        foreach($r->packages as $package => $p){  
+	          $_c = explode('/', $package);
+	          if(2!== count($_c) || $_c[0] !== $vendor || $_c[1] !== $packagename)continue;
+              foreach($p as $_v => $v){
+              	 $package = new \stdclass;
+              	 $package->package = new \stdclass;
+              	 $package->package->name = $vendor.'/'.$packagename;
+              	 $package->package->versions = array($_v => $v);
+                 $result = $package;
+			  }
+              break; 
+			}  	   
+	
+		}catch(\Exception $e){
+			trigger_error($e->getMessage(), E_USER_WARNING);
+			return $result;
+		}
+        
+        return $result;  	  	
    }  
 	
 }
