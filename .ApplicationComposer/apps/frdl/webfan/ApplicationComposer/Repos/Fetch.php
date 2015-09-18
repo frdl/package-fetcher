@@ -78,7 +78,7 @@ class Fetch
 
    public function defaultOptions(){
    	  return array(
-   	        'cache_time' => 8 * 60,
+   	        'cache_time' => 60 * 60,
    	        'save' => false,
    	        'debug' => false,
    	        'cachekey' => '~pmfetch'.sha1(get_class($this)),
@@ -130,7 +130,7 @@ class Fetch
    protected function _q_search($query){
      	$k = 'search '.$query;
      	$cache = $this->cache($k, null);
-     	if(is_array($cache)){
+     	if(is_array($cache) || is_object($cache)){
      	    $this->r =$cache;
 			return $this->r;
 		}
@@ -159,7 +159,7 @@ class Fetch
    protected function _q_package($vendor, $packagename){
        	$k = 'package '.$vendor.'/'.$packagename;
      	$cache = $this->cache($k, null);
-     	if(is_array($cache)){
+     	if(is_array($cache) || is_object($cache)){
      	    $this->r =$cache;
 			return $this->r;
 		}

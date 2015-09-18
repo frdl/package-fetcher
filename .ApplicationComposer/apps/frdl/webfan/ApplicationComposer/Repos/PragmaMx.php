@@ -28,38 +28,7 @@
  */
 namespace frdl\ApplicationComposer\Repos;
 
-class PragmaMx extends Package
+class PragmaMx extends phpclasses
 {
-/*
-     e.g 1: {
-            "type": "package",
-            "package": {
-                "name": "TerraProject/pragmamx",
-                "version": "2.2.2",
-                "source": {
-                    "url": "http://download.pragmamx.org/pmx/pragmaMx_2.2_2015-04-01--18-33_full.zip",
-                    "type": "zip"
-                }
-            }
-        },
-        */
-   
-   protected function _Data(){
-   	  $d = new \frdl\o;
-   	  $d->type = 'package';
-   	  $d->package = new \frdl\o;
-   	  $d->package->name = "TerraProject/pragmamx";
-   	  $d->package->version = "2.2.2";
-   	  $d->package->source = new \frdl\o;
-   	  $d->package->source->url = "http://download.pragmamx.org/pmx/pragmaMx_2.2_2015-04-01--18-33_full.zip";
-   	  $d->package->source->type = "zip";
-  }
-   
-   protected function _data(\frdl\o $data = null){
-   	  $this->_data = (null !== $data) ? $data : $this->_Data();
-   	  return  $this->_data;
-   }
-   
-
-	
+   protected $purl = 'http://pmx.frdl.de';
 }
