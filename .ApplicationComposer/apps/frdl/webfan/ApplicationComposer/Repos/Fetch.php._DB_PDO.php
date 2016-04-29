@@ -39,7 +39,7 @@ class Fetch
 	
    function __construct($options = array()){
    	  $this->o = array_merge($this->defaultOptions(), $options);
- 
+   	 $this->db =  \frdl\xGlobal\webfan::db();
    }	
 
   
@@ -62,10 +62,14 @@ class Fetch
   public function getActiveRepositories($refresh = false){
   	if(true !== $refresh && is_array($this->repos))return $this->repos;
 
-   $this->repos = array();
-   foreach($this->o['REPOSITORIES'] as $num => $repos){
-   	  if(1===intval($repos['_use']))$this->repos[]=$repos;
-   }
+    try{
+     $R = new \frdl\ApplicationComposer\Repository( array(), $this->db->settings(), $this->db );
+    // $this->repos  = $R->search(array('_use' => 1));
+      $this->repos  = $R->all();			
+	}catch(\Exception $e){
+      trigger_error($e->getMessage().' in '.__METHOD__.' '.__LINE__, E_USER_ERROR);
+     $this->repos = array();
+	}	
 	
 	
 	return $this->repos;
@@ -133,7 +137,7 @@ class Fetch
    	
    	   $this->r = array(); 
    	   foreach($this->getActiveRepositories(false) as $num => $repos){
- 	   	  $classname = $repos['fetcher_class'];
+ 	   	  $classname = urldecode($repos['fetcher_class']);
  	   	  if(1!==intval($repos['_use']))continue;
  	   	 try{
 	   	  $f = new $classname;
@@ -162,7 +166,7 @@ class Fetch
    	
    	   $this->r = array(); 
    	   foreach($this->getActiveRepositories(false) as $num => $repos){
- 	   	  $classname = $repos['fetcher_class'];
+ 	   	  $classname = urldecode($repos['fetcher_class']);
  	   	  if(1!==intval($repos['_use']))continue;
  	   	 try{
 	   	  $f = new $classname;
