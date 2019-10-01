@@ -1,5 +1,6 @@
 {
     "name": "frdl/package-fetcher",
+    "license" : "BSD3",
     "description" : "Fetch informations of installable php packages from several repositories.",
     "require": {
         "php": ">=5.3.0",
