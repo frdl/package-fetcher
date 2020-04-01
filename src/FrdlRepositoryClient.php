@@ -6,8 +6,12 @@ use frdl\PackageFetcher\AbstractComposerRepositoryClient as RepositoryClient;
 
 class FrdlRepositoryClient extends RepositoryClient
 {
-     protected $Client;
-     protected $services;
+    protected $httpClient;
+    protected $resultFactory;
+    protected $packagistUrl;
+    protected $Client;
+    protected $services;
+     
      public function __construct($packagistUrl = 'https://packages.frdl.de'){
         $this->Client = new PClient(null, null, $packagistUrl);
         $this->services = [
