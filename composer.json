@@ -9,7 +9,8 @@
     },
     "autoload": {
         "psr-4": {
-                 "frdl\\ApplicationComposer\\Repos\\" : ".ApplicationComposer/apps/frdl/webfan/ApplicationComposer/Repos/"
+                 "frdl\\ApplicationComposer\\Repos\\" : ".ApplicationComposer/apps/frdl/webfan/ApplicationComposer/Repos/",
+                 "frdl\\PackageFetcher" : "src/"
         }
  }
 }
