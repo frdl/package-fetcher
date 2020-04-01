@@ -1,6 +1,6 @@
 {
     "name": "frdl/package-fetcher",
-    "license" : "BSD-3-Clause",
+    "license" : "MIT",
     "description" : "Fetch informations of installable php packages from several repositories.",
     "require": {
         "php": ">=7.2",
