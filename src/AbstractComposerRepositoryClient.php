@@ -2,8 +2,10 @@
 namespace frdl\PackageFetcher;
 
 use Packagist\Api\Client as BaseClient
-
-abstract class AbstractComposerRepositoryClient extends BaseClient
+use frdl\PackageFetcher\RepositoryClientInterface;
+  
+    
+abstract class AbstractComposerRepositoryClient extends BaseClient implements RepositoryClientInterface
 {
     const SERVICE_PACKAGE = 'package';
     const SERVICE_ALL = 'all';
